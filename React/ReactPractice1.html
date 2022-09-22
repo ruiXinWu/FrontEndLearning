@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+ <title>Test</title>
+</head>
+<body>
+ <div id="root"></div>
+ <script type="text/babel">
+    //1. Destructing, unpack array object into multiple variables 
+    //array 
+    var[a,b,c] = [1,2,3]
+    //object
+    var{name,col} = {name:"Ruixin",col : 1}
+    //function
+    var fn = ([a,b]) => {
+        return a + b
+    }
+    //2.
+    //rest: we use dots to gather all the follow elements multiple num-> ... 
+    var sum = (...ele) =>{
+        let sum = 0
+        for(let i = 0; i < ele.length; ++i){
+            sum = sum + i
+        }
+        return sum
+    }
+    //spread: we use dots to spread all the follow elements   ... -> multiple num
+    var arr1 = [1,2,3]
+    var arr2 = [...arr1,3,4]
+    // array.map : method for array, excuate immediately and create a new array
+    var arr3 = arr2.map(x =>x * x)
+    console.log(arr3)
+
+    //3. for "this" keyword in arrow function, it points to the closest parent non arrow function
+    //for this keyword in regular function, it represents the object that call the function
+
+    //4. class
+    //template string is used to construct string, using ``, ${} can embed expression into string
+    //member variable must be in constructor or define ourseleves, a = this.b in class will return undefined
+    class person{
+        constructor(name,height,address){
+            this.name = name;
+            this.height = height;
+            this.address = address
+        }
+        introduction(){
+            console.log(`${this.name} ${this.height} ${this.address}`);
+        }
+    }
+
+    class smartPerson extends person{
+        constructor(name,height,address,IQ){
+            super(name,height,address);
+            this.IQ = IQ;
+        }
+    }
+    var p = new smartPerson("Ruixin",2,"2390 Portland")
+    p.introduction()
+
+    //5. JSX: {} to wrap javascript
+
+    //6. props
+    function Fn1(props){
+        return<p>{props.s}</p>
+    }
+    class Cl1 extends React.Component{
+        render() {
+            return <p>{this.props.s}</p>
+        }
+    }
+
+    //7. state
+    class Cl2 extends React.Component{
+        constructor(){
+            super()
+        this.state = {
+            a:10,
+            b:10
+        }}
+        change = () =>{
+            this.setState({a: this.state.a + 10})
+            this.setState(preState => {
+                return {b : preState.b + 10}
+            })
+        }
+        render(){
+            return <div>.
+            <p>a: {this.state.a}   b: {this.state.b}</p>
+            <button onClick = {this.change}>add 10</button>
+            </div>
+        }
+    }
+
+    // 8. communication between components
+   
+    //  (1). P -> C
+    //      - step1: in <C key=value>
+    //      - step2: in C class, this.props.key
+    //  (2). C -> P
+    //      - step1: in P class, define a callback fn
+    //      - step2: in <C key=cb fn>
+    //      - step3: in C class, this.props.key(cb fn)
+    //  (3). S <-> S
+    //      - LCA ( C -> P + P -> C )
+
+    class Parent extends React.Component{
+        state = {
+            Pnum: 10,
+            Cnum : 0
+        }
+        change = () =>{
+            this.setState({Pnum: this.state.Pnum + 10})
+        }
+        childCallFunction = (numFromChild) =>{
+            this.setState({Cnum : this.state.Cnum + numFromChild})
+            console.log(this.state.Cnum)
+        }
+        render(){
+            return <div>
+            <button onClick = {this.change}>Parent Button</button>
+            <p>Num from C to P Cnum : {this.state.Cnum}</p>
+            <Child Pnum = {this.state.Pnum} cb = {this.childCallFunction}/>
+            </div>
+        }
+    }
+    class Child extends React.Component{
+        //Pnum = this.props.Pnum  this doesn't work! why?
+        render(){
+            return <div>
+            <p>Num from P to C  Pnum : {this.props.Pnum}</p>
+            <button onClick = {this.onChangeHandler}>Child button</button>
+            </div>
+        }
+        // <button onClick = {this.props.cb(20)}>Child button</button> doesn't work
+        onChangeHandler = () =>{
+            this.props.cb(20)
+        }
+    }
+
+
+
+
+    ReactDOM.render(
+        // react element,
+        
+        //<Fn1 s = {"props function"}>
+        //<Cl1 s={"props class"}/>,
+        <Parent/>,
+        
+        
+        // wherr to mount
+        document.getElementById("root")
+    )
+ </script>
+</body>
+</html>
